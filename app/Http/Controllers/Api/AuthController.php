@@ -9,6 +9,8 @@ use App\Models\User;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
@@ -63,12 +65,27 @@ class AuthController extends Controller
     public function handleGoogleCallback()
     {
         $googleUser = Socialite::driver('google')->stateless()->user();
+        $accessToken = $googleUser->token;
 
+        $response = Http::withToken($accessToken)->get('https://people.googleapis.com/v1/people/me?personFields=birthdays');
+
+        $birthdays = $response->json()['birthdays'] ?? null;
+
+        $birthdate = null;
+
+        if ($birthdays) {
+            $birthdayData = collect($birthdays)->last();
+            $birthdate = $birthdayData['date'] ?? null;
+            if ($birthdate) {
+                $birthdate = sprintf('%04d-%02d-%02d', $birthdate['year'] ?? 1900, $birthdate['month'], $birthdate['day']);
+            }
+        }
         $user = User::updateOrCreate(
             ['email' => $googleUser->getEmail()],
             [
                 'name' => $googleUser->getName(),
                 'password' => bcrypt(Str::random(16)),
+                'date_of_birth' => $birthdate
             ]
         );
         $user->sendEmailVerificationNotification();
@@ -101,5 +118,35 @@ class AuthController extends Controller
         event(new Verified($user));
 
         return redirect(config('app.frontend_url') . '/email-verified?status=success');
+    }
+    public function sendResetLinkEmail(Request $request)
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = Password::sendResetLink($request->only('email'));
+
+        return $status === Password::RESET_LINK_SENT
+            ? response()->json(['message' => 'Ссылка для сброса пароля отправлена на почту.'])
+            : response()->json(['message' => 'Ошибка отправки ссылки.'], 400);
+    }
+    public function reset(Request $request)
+    {
+        $request->validate([
+            'token'    => 'required',
+            'email'    => 'required|email',
+            'password' => 'required|string|min:6|confirmed',
+        ]);
+
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->password = Hash::make($password);
+                $user->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? response()->json(['message' => 'Пароль успешно сброшен.'])
+            : response()->json(['message' => 'Ошибка при сбросе пароля.'], 400);
     }
 }

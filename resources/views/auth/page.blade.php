@@ -41,6 +41,21 @@
     <button onclick="logout()">Logout</button>
 </div>
 
+<h1>Восстановление пароля</h1>
+<form method="POST" action="/api/forgot-password">
+    <input type="email" name="email" placeholder="Email для восстановления"><br>
+    <button type="submit">Отправить ссылку</button>
+</form>
+
+<h1>Сброс пароля</h1>
+<form method="POST" action="/api/reset-password">
+    <input type="email" name="email" placeholder="Email"><br>
+    <input type="text" name="token" placeholder="Token из письма"><br>
+    <input type="password" name="password" placeholder="Новый пароль"><br>
+    <input type="password" name="password_confirmation" placeholder="Подтверждение"><br>
+    <button type="submit">Сбросить пароль</button>
+</form>
+
 <pre id="output"></pre>
 
 <script>

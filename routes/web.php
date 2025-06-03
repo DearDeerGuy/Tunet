@@ -10,5 +10,9 @@ Route::get('/', function () {
 Route::get('/login', function () {
     //redirect to login page
 })->name('login');
+Route::get('/reset', function () {
+    //redirect to reset page
+})->name('password.reset');
+
 
 
