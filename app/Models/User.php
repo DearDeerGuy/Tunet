@@ -19,6 +19,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'date_of_birth',
+        'avatar',
     ];
 
     protected $hidden = [
@@ -32,5 +33,9 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+    public function getAvatarUrlAttribute()
+    {
+        return $this->avatar ? asset('storage' . $this->avatar) : null;
     }
 }
