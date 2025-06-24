@@ -29,13 +29,19 @@ class AuthService
             ]);
         }
 
+
         $user = Auth::user();
+        if($user->isBanned){
+            return response()->json([
+                "message" => "Your account has been banned."
+            ],403);
+        }
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json([
             'access_token' => $token,
             'token_type'   => 'Bearer',
             'user'         => $user,
-        ], 200);
+        ]);
     }
 
     public function logout(User $user)

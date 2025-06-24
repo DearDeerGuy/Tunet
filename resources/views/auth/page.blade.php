@@ -30,6 +30,15 @@
 </div>
 
 <div class="section">
+    <input type="text" id="url_video" placeholder="name video">
+    <button onclick="update_video()">Register</button>
+
+    <video controls width="600">
+        <source id="video_source" src="http://localhost:8000/api/video/video.mp4" type="video/mp4">
+    </video>
+</div>
+
+<div class="section">
     <h2>Google Login</h2>
     <a href="/api/auth/google/redirect">
         <button>Login with Google</button>
@@ -60,7 +69,12 @@
 
 <script>
     let token = '';
+    function update_video() {
 
+        document.getElementById('video_source').src=  document.getElementById('url_video').value;
+
+
+    }
     function register() {
         fetch('/api/register', {
             method: 'POST',
