@@ -7,7 +7,7 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
-class BannedRequest extends FormRequest
+class CreateReviewsRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,9 +25,13 @@ class BannedRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
+            'film_id' => ['required', 'exists:films,id'],
+            'user_id' => ['required', 'exists:users,id'],
+            'mark' => ['required', 'numeric', 'min:1', 'max:10'],
+            'comment' => ['required', 'string','nullable'],
         ];
     }
+
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([

@@ -40,4 +40,31 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->avatar ? asset('storage' . $this->avatar) : null;
     }
+    protected $model = \App\Models\User::class;
+
+    public function definition(): array
+    {
+        return [
+            'name' => $this->faker->name,
+            'email' => $this->faker->unique()->safeEmail,
+            'email_verified_at' => now(),
+            'password' => Hash::make('password'),
+            'date_of_birth' => $this->faker->date(),
+            'avatar' => null,
+            'admin_lvl' => 0,
+            'isBanned' => false,
+        ];
+    }
+
+    public function configure()
+    {
+        return $this->afterCreating(function (\App\Models\User $user) {
+            // Установить уровни админа вручную
+            static $adminLevels = [1, 2, 3];
+            if ($user->id <= 3) {
+                $user->admin_lvl = $adminLevels[$user->id - 1];
+                $user->save();
+            }
+        });
+    }
 }

@@ -2,7 +2,9 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rule;
 
@@ -21,5 +23,13 @@ class UpdateProfileRequest extends FormRequest
             'date_of_birth'  => ['nullable', 'date'],
             'avatar'         => ['required', 'image', 'max:2048'],
         ];
+    }
+
+    public function failedValidation(Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => 'error',
+            'errors' => $validator->errors(),
+        ], 422));
     }
 }

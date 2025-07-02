@@ -7,32 +7,25 @@ use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
-class BannedRequest extends FormRequest
+class CreateCategoryRequest extends FormRequest
 {
-    /**
-     * Determine if the user is authorized to make this request.
-     */
     public function authorize(): bool
     {
         return Auth::check();
     }
 
-    /**
-     * Get the validation rules that apply to the request.
-     *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
-     */
-    public function rules(): array
-    {
-        return [
-            'user_id' => ['required', 'integer', 'exists:users,id'],
-        ];
-    }
     public function failedValidation(Validator $validator)
     {
         throw new HttpResponseException(response()->json([
             'status' => 'error',
             'errors' => $validator->errors(),
         ], 422));
+    }
+    public function rules(): array
+    {
+        return [
+            'name' => ['required', 'string', 'max:255','unique:categories'],
+            'slug' => ['required', 'string', 'max:255', 'unique:categories'],
+        ];
     }
 }

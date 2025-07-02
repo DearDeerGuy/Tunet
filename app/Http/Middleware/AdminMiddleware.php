@@ -3,30 +3,18 @@
 namespace App\Http\Middleware;
 
 use Closure;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Symfony\Component\HttpFoundation\Response;
 
 class AdminMiddleware
 {
-    /**
-     * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
-     */
     public function handle($request, Closure $next, ...$lvl)
     {
         $user = Auth::user();
-
-        if (!$user) {
-            abort(403, 'Нет доступа.');
-        }
-
-
-
-        if ((int)$lvl <= $user->admin_lvl) {
-            abort(403, 'Нет доступа.');
-        }
+        $lvl = array_pop($lvl);
+        if (!$user || $user->admin_lvl < (int)$lvl)
+            return response()->json([
+                'message' => "Нет доступа."
+            ], 403);
 
         return $next($request);
     }

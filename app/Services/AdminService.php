@@ -15,7 +15,7 @@ class AdminService
         $user->admin_lvl = $credentials['admin_lvl'];
         $user->save();
 
-        Log::alert("{${auth()->user()->name}} ({${\auth()->id()}}) make new admin {$user->name}} ({$user->id}) lvl - {$user->admin_lvl}  ");
+        Log::channel('admin')->alert("{${auth()->user()->name}} ({${\auth()->id()}}) make new admin {$user->name}} ({$user->id}) lvl - {$user->admin_lvl}  ");
 
         return response()->json([
             'user_id' => $credentials['user_id'],
@@ -33,7 +33,7 @@ class AdminService
         $user->isBanned = true;
         $user->save();
 
-        Log::alert("{${auth()->user()->name}} ({${\auth()->id()}}) banned user {$user->name}} ({$user->id})  ");
+        Log::channel('admin')->alert("{${auth()->user()->name}} ({${\auth()->id()}}) banned user {$user->name}} ({$user->id})  ");
 
         return response()->json([
             'user_id' => $credentials['user_id'],
@@ -46,7 +46,7 @@ class AdminService
         $user->isBanned = false;
         $user->save();
 
-        Log::alert("{${auth()->user()->name}} ({${\auth()->id()}}) unbanned user {$user->name}} ({$user->id})  ");
+        Log::channel('admin')->alert("{${auth()->user()->name}} ({${\auth()->id()}}) unbanned user {$user->name}} ({$user->id})  ");
 
         return response()->json([
             'user_id' => $credentials['user_id'],
