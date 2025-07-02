@@ -36,9 +36,13 @@ class User extends Authenticatable implements MustVerifyEmail
             'password' => 'hashed',
         ];
     }
-    public function getAvatarUrlAttribute()
+
+    public function toArray()
     {
-        return $this->avatar ? asset('storage' . $this->avatar) : null;
+        $array = parent::toArray();
+        if($this->avatar!=null)
+            $array['avatar'] = env('APP_URL') . "/storage/{$this->avatar}";
+        return $array;
     }
     protected $model = \App\Models\User::class;
 

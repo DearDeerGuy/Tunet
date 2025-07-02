@@ -8,6 +8,8 @@ use App\Http\Requests\ReviewsRequest;
 use App\Models\Films;
 use App\Models\Reviews;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+
 class ReviewsController extends Controller
 {
     public function index(ReviewsRequest $request)
@@ -23,6 +25,7 @@ class ReviewsController extends Controller
     public function store(CreateReviewsRequest $request)
     {
         $validated = $request->validated();
+        $validated['user_id']=Auth::id();
 
         $reviews = Reviews::create($validated);
         return response()->json($reviews, 201);

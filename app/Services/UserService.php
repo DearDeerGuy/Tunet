@@ -56,10 +56,18 @@ class UserService
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
         }
+
         $user->fill($request->validated());
-        $path = $request->file('avatar')->store('avatars', 'public');
-        $user->avatar = $path;
+
+        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
+            $file = $request->file('avatar');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('avatars', $filename, 'public');
+            $user->avatar = $path;
+        }
+
         $user->save();
+
 
         return response()->json([
             'message' => 'Данные успешно обновлены.',

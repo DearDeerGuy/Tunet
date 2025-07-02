@@ -36,6 +36,8 @@ class FileController extends Controller
 
     }
     public function destroy(Files $file) {
-
+        $file->delete();
+        return response()->json(null, 204);
     }
+
 }

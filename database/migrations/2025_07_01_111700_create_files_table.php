@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('files', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('film_id');
+            $table->unsignedBigInteger('films_id');
             $table->string('link');
             $table->integer('season_number')->nullable();
             $table->integer('episode_number')->nullable();
             $table->timestamps();
 
-            $table->foreign('film_id')->references('id')->on('films')->onDelete('cascade');
+            $table->foreign('films_id')->references('id')->on('films')->onDelete('cascade');
 
         });
     }

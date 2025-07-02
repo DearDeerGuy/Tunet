@@ -1,5 +1,9 @@
 <?php
 
+
+/*
+ * File -> link = 127.0.0.1:8000/api/files/stream/uniq.mp4
+ * */
     namespace App\Http\Controllers\Api;
 
     use App\Http\Controllers\Controller;
