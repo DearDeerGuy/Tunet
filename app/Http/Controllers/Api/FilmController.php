@@ -68,17 +68,18 @@ class FilmController extends Controller
     public function update(Films  $film, CreateFilmRequest $request) {
         $validated = $request->validated();
 
-        if ($film->poster && Storage::disk('public')->exists($film->poster)) {
-            Storage::disk('public')->delete($film->poster);
+        // Если есть файл постера, удаляем старый и сохраняем новый
+        if ($request->hasFile('poster')) {
+            // Удаляем старый постер, если он существует
+            if ($film->poster && Storage::disk('public')->exists($film->poster))
+                Storage::disk('public')->delete($film->poster);
+
+            // Сохраняем новый постер
+            $file = $request->file('poster');
+            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
+            $path = $file->storeAs('posters', $filename, 'public');
+            $validated['poster'] = $path;
         }
-
-        $file = $request->file('poster');
-
-        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-        $path = $file->storeAs('posters', $filename, 'public');
-
-        $validated['poster'] = $path;
 
         $film->update($validated);
 

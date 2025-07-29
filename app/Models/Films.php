@@ -19,9 +19,11 @@ class Films extends Model
         'description',
         'type',
         'release_date',
-        'isVisible'
+        'isVisible',
+        'country',
+        'producer',
+        'actors',
     ];
-
 
     public function files(): HasMany
     {

@@ -16,13 +16,21 @@ class CreateFilmRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
-            'poster' => ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'],
+        $rules = [
             'title' => ['required', 'max:255'],
             'description' => ['required', 'max:1000'],
             'release_date'=> ['required','date'],
-            'type'=>['required', 'in:film,serial'],
+            'type' => ['required', 'in:film,serial'],
+            'country' => ['required', 'string', 'max:255'],
+            'producer' => ['required', 'string', 'max:255'],
+            'actors' => ['required', 'string', 'max:255'],
         ];
+        // При обновлении фильма отправка файла постера не обязательна
+        $rules['poster'] = $this->isMethod('post') ? 
+            ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'] : 
+            ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'];
+
+        return $rules;  
     }
     public function failedValidation(Validator $validator)
     {
