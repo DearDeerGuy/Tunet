@@ -1,8 +1,12 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
+use App\Models\Favorite;
+use App\Models\Films;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FavoriteController extends Controller
 {
@@ -17,7 +21,10 @@ class FavoriteController extends Controller
 
         return response()->json($favorites);
     }
-
+    public function show(Favorite $favorite)
+    {
+        return response()->json($favorite);
+    }
     // Добавить фильм в избранное
     public function store(Request $request)
     {
@@ -31,7 +38,7 @@ class FavoriteController extends Controller
         $alreadyExists = Favorite::where('user_id', $user->id)
                                  ->where('film_id', $film_id)
                                  ->exists();
-        if ($alreadyExists) 
+        if ($alreadyExists)
             return response()->json(['message' => 'Фильм уже в избранном.'], 409);
 
         $favorite = Favorite::create([
@@ -52,7 +59,7 @@ class FavoriteController extends Controller
                            ->delete();
         if (!$deleted)
             return response()->json(['message' => 'Фильм не найден в избранном.'], 404);
-        
+
         return response()->json(['message' => 'Удалено из избранного.']);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Favorite extends Model
 {
@@ -20,6 +21,6 @@ class Favorite extends Model
     // Связь с фильмом/сериалом
     public function film(): BelongsTo
     {
-        return $this->belongsTo(Film::class);
+        return $this->belongsTo(Films::class);
     }
 }

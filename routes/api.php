@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\VideoStreamController;
 use App\Http\Controllers\Api\ReviewsController;
 use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\FilmController;
+use App\Http\Controllers\Api\FavoriteController;
 use Illuminate\Support\Facades\Route;
 
 
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('reviews', ReviewsController::class);
     Route::apiResource('category', CategoriesController::class)->only('index', 'show');
     Route::apiResource('film', FilmController::class)->only('index', 'show');
+    Route::apiResource('favorite', FavoriteController::class)->except('update');
     Route::middleware('admin:1')->group(function () {
         Route::apiResource('film', FilmController::class)->except('index', 'show');
     });
