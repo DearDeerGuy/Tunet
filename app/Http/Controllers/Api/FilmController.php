@@ -54,6 +54,11 @@ class FilmController extends Controller
         $validated['poster'] = $path;
 
         $film = Films::create($validated);
+        $validated['category'] = explode(',', $validated['category']);
+        foreach ($validated['category'] as $category) {
+            $film->category()->attach($category);
+        }
+
 
         return response()->json($film);
     }
