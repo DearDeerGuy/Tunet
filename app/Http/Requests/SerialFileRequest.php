@@ -3,6 +3,9 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
+use Illuminate\Http\Exceptions\HttpResponseException;
+use Illuminate\Support\Facades\Auth;
 
 class SerialFileRequest extends FormRequest
 {
@@ -15,7 +18,7 @@ class SerialFileRequest extends FormRequest
     {
         return [
             'film_id' => ['required', 'exists:films,id'],
-            'file' => ['required', 'file', 'mimetypes:video/mp4,video/avi,video/mpeg,video/quicktime,video/x-matroska', 'max:10240000'],
+            'file' => ['required', 'file', 'mimes:mp4,avi,mpeg,mov,mkv', 'max:10240000'],
             'season_number' => ['required', 'integer'],
             'episode_number' => ['required', 'integer'],
         ];
