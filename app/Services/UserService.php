@@ -12,12 +12,13 @@ use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
-    public function sendResetLinkEmail($request) {
+    public function sendResetLinkEmail($request)
+    {
         $status = Password::sendResetLink($request->only('email'));
 
         return $status === Password::RESET_LINK_SENT
-            ? response()->json(['message' => 'Ссылка для сброса пароля отправлена на почту.'])
-            : response()->json(['message' => 'Ошибка отправки ссылки.'], 400);
+            ? response()->json(['message' => 'Посилання для скидання пароля надіслано на пошту.'])
+            : response()->json(['message' => 'Помилка надсилання посилання.'], 400);
     }
     public function reset($request)
     {
@@ -31,15 +32,16 @@ class UserService
         );
 
         return $status === Password::PASSWORD_RESET
-            ? response()->json(['message' => 'Пароль успешно сброшен.'])
-            : response()->json(['message' => 'Ошибка при сбросе пароля.'], 400);
+            ? response()->json(['message' => 'Пароль успішно скинутий.'])
+            : response()->json(['message' => 'Помилка під час скидання пароля.'], 400);
     }
-    public function changePassword(ChangePasswordRequest $request){
+    public function changePassword(ChangePasswordRequest $request)
+    {
         $user = Auth::user();
 
         if (!Hash::check($request->password, $user->password)) {
             return response()->json([
-                'message' => 'Неверный текущий пароль.'
+                'message' => 'Неправильний поточний пароль.'
             ], 403);
         }
 
@@ -47,11 +49,12 @@ class UserService
 
         $user->save();
 
-        return  response()->json([
-            'message' => 'Пароль успешно обновлён.'
+        return response()->json([
+            'message' => 'Пароль успішно оновлено.'
         ]);
     }
-    public function updateProfile(UpdateProfileRequest $request){
+    public function updateProfile(UpdateProfileRequest $request)
+    {
         $user = Auth::user();
         if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
             Storage::disk('public')->delete($user->avatar);
@@ -70,8 +73,8 @@ class UserService
 
 
         return response()->json([
-            'message' => 'Данные успешно обновлены.',
-            'user'    => $user,
+            'message' => 'Дані успішно оновлено.',
+            'user' => $user,
         ]);
     }
 }

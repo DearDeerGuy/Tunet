@@ -27,7 +27,7 @@ class AdminService
         $user = User::find($credentials['user_id']);
         if(Auth::user()->admin_lvl <= $user->admin_lvl){
             return response()->json([
-                'message' => 'You cannot ban a user with a higher admin level than yours.'
+                'message' => 'Ви не можете забанити користувача з вищим рівнем адміністраторських прав, ніж ваш'
             ], 403);
         }
         $user->isBanned = true;

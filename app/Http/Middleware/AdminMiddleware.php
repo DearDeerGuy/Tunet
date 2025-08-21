@@ -13,7 +13,7 @@ class AdminMiddleware
         $lvl = array_pop($lvl);
         if (!$user || $user->admin_lvl < (int)$lvl)
             return response()->json([
-                'message' => "Нет доступа."
+                'message' => "Відказано в доступі"
             ], 403);
 
         return $next($request);

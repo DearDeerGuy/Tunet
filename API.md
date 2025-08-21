@@ -148,49 +148,8 @@ Some endpoints require **Bearer Token Authentication**.
             "name": "Action",
             "created_at": "2025-08-19T18:11:43.000000Z",
             "updated_at": "2025-08-19T18:11:43.000000Z"
-        },
-        {
-            "id": 2,
-            "slug": "drama",
-            "name": "Drama",
-            "created_at": "2025-08-19T18:11:43.000000Z",
-            "updated_at": "2025-08-19T18:11:43.000000Z"
-        },
-        {
-            "id": 3,
-            "slug": "comedy",
-            "name": "Comedy",
-            "created_at": "2025-08-19T18:11:43.000000Z",
-            "updated_at": "2025-08-19T18:11:43.000000Z"
-        },
-        {
-            "id": 4,
-            "slug": "sci-fi",
-            "name": "Sci-Fi",
-            "created_at": "2025-08-19T18:11:43.000000Z",
-            "updated_at": "2025-08-19T18:11:43.000000Z"
-        },
-        {
-            "id": 5,
-            "slug": "fantasy",
-            "name": "Fantasy",
-            "created_at": "2025-08-19T18:11:43.000000Z",
-            "updated_at": "2025-08-19T18:11:43.000000Z"
-        },
-        {
-            "id": 6,
-            "slug": "thriller",
-            "name": "Thriller",
-            "created_at": "2025-08-19T18:11:43.000000Z",
-            "updated_at": "2025-08-19T18:11:43.000000Z"
-        },
-        {
-            "id": 7,
-            "slug": "horror",
-            "name": "Horror",
-            "created_at": "2025-08-19T18:11:43.000000Z",
-            "updated_at": "2025-08-19T18:11:43.000000Z"
         }
+        //...
     ],
     "first_page_url": "http://localhost:8000/api/category?page=1",
     "from": 1,

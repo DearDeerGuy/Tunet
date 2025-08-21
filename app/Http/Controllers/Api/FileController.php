@@ -50,7 +50,7 @@ class FileController extends Controller
     public function getSerialInfo(Films $film)
     {
         if ($film->type != "serial")
-            return response()->json(['message' => 'Is not a serial']);
+            return response()->json(['message' => 'Не серіал']);
 
         $seasons = $film->files->groupBy('season_number');
 
@@ -64,7 +64,7 @@ class FileController extends Controller
         // Проверяем, есть ли уже файлы у фильма
         $existingFilesCount = Files::where('films_id', $validated['film_id'])->count();
         if ($existingFilesCount > 0)
-            return response()->json(['message' => 'Файлы для этого фильма уже загружены.'], 409);
+            return response()->json(['message' => 'Файл для цього фільму вже завантажений. Видаліть чи оновіть існуючий'], 409);
 
         $file = $request->file('file');
 
@@ -85,7 +85,7 @@ class FileController extends Controller
 
         $serial = Films::find($validated['film_id']);
         if (!$serial || $serial->type != "serial")
-            return response()->json('error is not a film', 400);
+            return response()->json('Не серіал', 400);
 
         $file = $request->file('file');
         $filename = uniqid() . '.' . $file->getClientOriginalExtension();
@@ -136,7 +136,7 @@ class FileController extends Controller
         // Сохраняем новый файл
         $uploaded = $request->file('file');
         $filename = uniqid() . '.' . $uploaded->getClientOriginalExtension();
-        $path = "serials/{$file->films_id}/{$file->season_number}/{$filename}";
+        $path = "films/{$file->films_id}/{$file->season_number}/{$filename}";
         $uploaded->storeAs('', $path, 'public');
 
         // Обновляем путь
@@ -160,15 +160,13 @@ class FileController extends Controller
 
     public function stream(Request $request, $filename)
     {
-
-
         if (isset($request['path']) && !empty($request['path'])) {
             $filename = $request['path'];
         }
         $videoPath = storage_path('app/public/films/' . $filename);
         if (!file_exists($videoPath)) {
             //abort(404, 'Файл не найден');
-            return response()->json(['message' => 'Файл не найден'], 404);
+            return response()->json(['message' => 'Файл не знайдено'], 404);
         }
         $fileSize = filesize($videoPath);
         $start = 0;

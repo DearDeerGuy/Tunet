@@ -19,13 +19,14 @@ class StoreUserRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'date_of_birth' => ['required', 'date'],
+            'date_of_birth' => ['nullable', 'date'],
             'password' => ['required', 'string', 'min:6', 'confirmed'],
         ];
     }
 
     public function failedValidation(Validator $validator)
     {
+        
         throw new HttpResponseException(response()->json([
             'status' => 'error',
             'errors' => $validator->errors(),

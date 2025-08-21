@@ -35,7 +35,7 @@ class AuthController extends Controller
     public function verificationResend(Request $request)
     {
         $request->user()->sendEmailVerificationNotification();
-        return response()->json(['message' => 'Письмо с подтверждением отправлено повторно']);
+        return response()->json(['message' => 'Лист з підтвердженням повторно надіслано на вашу електронну пошту.']);
     }
     public function verification(OAuthService $service, Request $request, $id, $hash)
     {

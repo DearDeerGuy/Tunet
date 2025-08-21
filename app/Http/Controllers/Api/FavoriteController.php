@@ -16,8 +16,8 @@ class FavoriteController extends Controller
         $perPage = $request->query('per_page', 10);
         $user = Auth::user();
         $favorites = $user->favorites()
-                      ->with('film')
-                      ->paginate($perPage);
+            ->with('film')
+            ->paginate($perPage);
 
         return response()->json($favorites);
     }
@@ -36,10 +36,10 @@ class FavoriteController extends Controller
 
         // Проверка на дублирование
         $alreadyExists = Favorite::where('user_id', $user->id)
-                                 ->where('film_id', $film_id)
-                                 ->exists();
+            ->where('film_id', $film_id)
+            ->exists();
         if ($alreadyExists)
-            return response()->json(['message' => 'Фильм уже в избранном.'], 409);
+            return response()->json(['message' => 'Фільм вже в обраних'], 409);
 
         $favorite = Favorite::create([
             'user_id' => $user->id,
@@ -55,11 +55,11 @@ class FavoriteController extends Controller
         $user = Auth::user();
 
         $deleted = Favorite::where('user_id', $user->id)
-                           ->where('film_id', $film_id)
-                           ->delete();
+            ->where('film_id', $film_id)
+            ->delete();
         if (!$deleted)
-            return response()->json(['message' => 'Фильм не найден в избранном.'], 404);
+            return response()->json(['message' => 'Фільм не знайдено в обраних'], 404);
 
-        return response()->json(['message' => 'Удалено из избранного.']);
+        return response()->json(['message' => 'Видалено з обраних.']);
     }
 }

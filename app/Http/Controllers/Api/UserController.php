@@ -24,13 +24,12 @@ class UserController extends Controller
     {
         return $service->reset($request);
     }
-    public function changePassword(UserService  $service,ChangePasswordRequest $request): \Illuminate\Http\JsonResponse
+    public function changePassword(UserService $service, ChangePasswordRequest $request): \Illuminate\Http\JsonResponse
     {
         return $service->changePassword($request);
     }
     public function updateProfile(UserService $service, UpdateProfileRequest $request): \Illuminate\Http\JsonResponse
     {
         return $service->updateProfile($request);
-
     }
 }
