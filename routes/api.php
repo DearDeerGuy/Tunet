@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\FileController;
+use App\Http\Controllers\Api\TariffController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\ReviewsController;
 use App\Http\Controllers\Api\CategoriesController;
@@ -18,6 +19,7 @@ Route::apiResource('film', FilmController::class)->only('index', 'show');       
 Route::apiResource('category', CategoriesController::class)->only('index', 'show');         // +
 Route::apiResource('reviews', ReviewsController::class)->only('index');                     // +
 
+Route::apiResource('tariff', TariffController::class)->only('index', 'show');               // +
 
 Route::prefix('auth/google')->group(function () {
     Route::get('/redirect', [AuthController::class, 'redirectToGoogle']);
@@ -47,7 +49,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::apiResource('category', CategoriesController::class)->except('index', 'show'); // +
 
     });
+    Route::middleware('admin:3')->group(function () {
+        Route::apiResource('tariff', TariffController::class)->except('index', 'show');     // +
 
+
+    });
     Route::prefix('admin')->group(function () {
         // default page
         Route::middleware('admin:1')->group(function () {
@@ -59,6 +65,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('admin:3')->group(function () {
             Route::post('/unban', [AdminController::class, 'unban'])->name('admin.unban');  // +
             Route::post('/make', [AdminController::class, 'makeAdmin'])->name('admin.makeAdmin'); // +
+            Route::post('/tariff', [TariffController::class, 'setTariffToUser']);           // +
+
         });
     });
 });

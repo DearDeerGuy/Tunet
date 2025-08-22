@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,14 +14,15 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->text('description')->nullable();
-            $table->decimal('price', 10, 2); 
+            $table->decimal('price', 10, 2);
             $table->unsignedInteger('duration_months');
-            $table->string('image')->nullable(); 
+            $table->string('image')->nullable();
             $table->timestamps();
         });
 
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('tariff_id')->nullable()->constrained('tariffs')->nullOnDelete();
+            $table->dateTime('tariff_start_date')->nullable();
         });
     }
 
@@ -34,6 +34,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['tariff_id']);
             $table->dropColumn('tariff_id');
+            $table->dropColumn('tariff_start_date');
         });
 
         Schema::dropIfExists('tariffs');
