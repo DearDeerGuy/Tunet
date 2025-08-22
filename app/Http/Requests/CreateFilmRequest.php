@@ -28,8 +28,8 @@ class CreateFilmRequest extends FormRequest
         ];
         // При обновлении фильма отправка файла постера не обязательна
         $rules['poster'] = $this->isMethod('post') ?
-            ['required', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'] :
-            ['sometimes', 'image', 'mimes:jpeg,png,jpg,gif', 'max:4096'];
+            ['required', 'image', 'mimes:jpeg,png,jpg', 'max:4096'] :
+            ['sometimes', 'image', 'mimes:jpeg,png,jpg', 'max:4096'];
 
         return $rules;
     }

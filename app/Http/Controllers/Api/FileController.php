@@ -105,7 +105,6 @@ class FileController extends Controller
         return response()->json($fileModel, 201);
     }
 
-    // Переделать
     public function update(FileRequest $request, Files $file)
     {
         $validated = $request->validated();
@@ -126,7 +125,7 @@ class FileController extends Controller
 
         return response()->json($file);
     }
-    // Переделать
+
     public function updateSerial(SerialFileRequest $request, Files $file)
     {
         // Удаляем старый файл, если он есть
@@ -142,17 +141,17 @@ class FileController extends Controller
         // Обновляем путь
         $file->update([
             'link' => $path,
+            'season_number' => (int) $request->season_number,
+            'episode_number' => (int) $request->episode_number,
         ]);
 
         return response()->json($file);
     }
-    // Проверить
+
     public function destroy(Files $file)
     {
         Storage::disk('public')->delete($file->link);
         $file->delete();
-
-        Files::where('id', $file->id)->delete();
 
         return response()->json(null, 204);
     }

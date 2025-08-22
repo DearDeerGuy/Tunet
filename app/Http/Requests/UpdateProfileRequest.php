@@ -18,10 +18,10 @@ class UpdateProfileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'name'           => ['nullable', 'string', 'max:255'],
-            'email'          => ['nullable', 'email', Rule::unique('users', 'email')->ignore($this->user()->id)],
-            'date_of_birth'  => ['nullable', 'date'],
-            'avatar'         => ['required', 'image', 'max:2048'],
+            'name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'email', Rule::unique('users', 'email')->ignore($this->user()->id)],
+            'date_of_birth' => ['nullable', 'date'],
+            'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ];
     }
 
