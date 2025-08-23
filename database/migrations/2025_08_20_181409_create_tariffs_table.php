@@ -22,7 +22,7 @@ return new class extends Migration {
 
         Schema::table('users', function (Blueprint $table) {
             $table->foreignId('tariff_id')->nullable()->constrained('tariffs')->nullOnDelete();
-            $table->dateTime('tariff_start_date')->nullable();
+            $table->dateTime('tariff_end_date')->nullable();
         });
     }
 
@@ -34,7 +34,7 @@ return new class extends Migration {
         Schema::table('users', function (Blueprint $table) {
             $table->dropForeign(['tariff_id']);
             $table->dropColumn('tariff_id');
-            $table->dropColumn('tariff_start_date');
+            $table->dropColumn('tariff_end_date');
         });
 
         Schema::dropIfExists('tariffs');

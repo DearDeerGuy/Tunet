@@ -3,12 +3,11 @@
 namespace App\Services;
 
 use App\Http\Requests\ChangePasswordRequest;
-use App\Http\Requests\ResetPasswordRequest;
 use App\Http\Requests\UpdateProfileRequest;
+use App\Http\Util\ImageSaverUtil;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Storage;
 
 class UserService
 {
@@ -56,21 +55,14 @@ class UserService
     public function updateProfile(UpdateProfileRequest $request)
     {
         $user = Auth::user();
-        if ($user->avatar && Storage::disk('public')->exists($user->avatar)) {
-            Storage::disk('public')->delete($user->avatar);
-        }
 
         $user->fill($request->validated());
 
-        if ($request->hasFile('avatar') && $request->file('avatar')->isValid()) {
-            $file = $request->file('avatar');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('avatars', $filename, 'public');
-            $user->avatar = $path;
+        if ($request->hasFile('avatar')) {
+            $user->avatar = ImageSaverUtil::update($user->avatar, 'avatars', $request->file('avatar'));
         }
 
         $user->save();
-
 
         return response()->json([
             'message' => 'Дані успішно оновлено.',

@@ -50,7 +50,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
     Route::middleware('admin:3')->group(function () {
-        Route::apiResource('tariff', TariffController::class)->except('index', 'show');     // +
+        Route::apiResource('tariff', TariffController::class)->except('index', 'show', 'update');     // +
+        Route::post('/tariff/{tariff}', [TariffController::class, 'update']);           // +
 
 
     });

@@ -3,41 +3,31 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use DateTime;
+use App\Http\Requests\StoreTariffRequest;
+use App\Http\Requests\UpdateTariffRequest;
+use App\Http\Util\ImageSaverUtil;
 use Illuminate\Http\Request;
 use App\Models\Tariff;
-use Illuminate\Support\Facades\Storage;
 use App\Models\User;
+
 
 class TariffController extends Controller
 {
     public function index()
     {
-        Tariff::all();
         return response()->json(Tariff::all());
     }
     public function show($id)
     {
-        Tariff::find($id);
         return response()->json(Tariff::find($id));
     }
-    public function store(Request $request)
+    public function store(StoreTariffRequest $request)
     {
-        $validatedData = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'price' => ['required', 'integer'],
-            'description' => ['nullable', 'string'],
-            'duration_months' => ['required', 'integer'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-        ]);
+        $validatedData = $request->validated();
 
-        // Handle image upload if provided
         $path = null;
-        if (isset($validatedData['image'])) {
-            $file = $request->file('image');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('tariffs', $filename, 'public');
-        }
+        if (isset($validatedData['image']))
+            $path = ImageSaverUtil::save('tariffs', $request->file('image'));
 
         $tariff = Tariff::create(
             [
@@ -51,24 +41,13 @@ class TariffController extends Controller
 
         return response()->json($tariff, 201);
     }
-    public function update(Request $request, Tariff $tariff)
+    public function update(UpdateTariffRequest $request, Tariff $tariff)
     {
-        $validatedData = $request->validate([
-            'name' => ['nullable', 'string', 'max:255'],
-            'price' => ['nullable', 'integer'],
-            'description' => ['nullable', 'string'],
-            'duration_months' => ['nullable', 'integer'],
-            'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
-        ]);
-        // Handle image upload if provided
+        $validatedData = $request->validated();
+
         $path = null;
-        if (isset($validatedData['image'])) {
-            if ($tariff->image && Storage::disk('public')->exists($tariff->image))
-                Storage::disk('public')->delete($tariff->image);
-            $file = $request->file('image');
-            $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-            $path = $file->storeAs('tariffs', $filename, 'public');
-        }
+        if (isset($validatedData['image']))
+            $path = ImageSaverUtil::update($tariff->image, 'tariffs', $request->file('image'));
 
         $tariff->update(
             [
@@ -87,10 +66,11 @@ class TariffController extends Controller
     {
         $tariff = Tariff::find($id);
         if ($tariff) {
-            if ($tariff->image && Storage::disk('public')->exists($tariff->image)) {
-                Storage::disk('public')->delete($tariff->image);
-            }
+            if ($tariff->image)
+                ImageSaverUtil::delete($tariff->image);
+
             $tariff->delete();
+
             return response()->json(['message' => 'Тариф успішно видалено']);
         } else {
             return response()->json(['message' => 'Тариф не знайдено'], 404);
@@ -116,9 +96,10 @@ class TariffController extends Controller
             if (!$tariff) {
                 return response()->json(['message' => 'Тариф не знайдено'], 404);
             }
-            $user->tariff_start_date = now();
+            $user->tariff_end_date = now()->addMonths($tariff->duration_months);
+            ;
         } else {
-            $user->tariff_start_date = null;
+            $user->tariff_end_date = null;
         }
 
         $user->tariff_id = $tariffId;

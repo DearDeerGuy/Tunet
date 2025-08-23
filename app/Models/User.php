@@ -25,7 +25,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'admin_lvl',
         'isBanned',
         'tariff_id',
-        'tariff_start_date'
+        'tariff_end_date'
     ];
 
     protected $hidden = [
