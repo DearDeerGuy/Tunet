@@ -17,8 +17,8 @@ class FileRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'film_id' => ['required','exists:films,id'],
-            'file' => ['required', 'mimetypes:video/mp4,video/avi,video/mpeg,video/quicktime,video/x-matroska', 'max:10240000'],
+            'film_id' => ['required', 'exists:films,id'],
+            'file' => ['required', 'file', 'mimes:mp4,avi,mpeg,mov,mkv', 'max:10240000'], 
         ];
     }
 

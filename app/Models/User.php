@@ -1,18 +1,20 @@
 <?php
 
 namespace App\Models;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Laravel\Sanctum\HasApiTokens;
 
 
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
-    use HasFactory, Notifiable,HasApiTokens;
+    use HasFactory, Notifiable, HasApiTokens;
 
     protected $fillable = [
         'name',
@@ -22,6 +24,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'avatar',
         'admin_lvl',
         'isBanned',
+        'tariff_id',
+        'tariff_end_date'
     ];
 
     protected $hidden = [
@@ -37,10 +41,20 @@ class User extends Authenticatable implements MustVerifyEmail
         ];
     }
 
+    public function favorites(): HasMany
+    {
+        return $this->hasMany(Favorite::class);
+    }
+    public function tariff(): HasOne
+    {
+        return $this->hasOne(Tariff::class);
+    }
+
+
     public function toArray()
     {
         $array = parent::toArray();
-        if($this->avatar!=null)
+        if ($this->avatar != null)
             $array['avatar'] = env('APP_URL') . "/storage/{$this->avatar}";
         return $array;
     }

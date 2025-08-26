@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateFilmRequest;
+use App\Http\Util\ImageSaverUtil;
 use App\Models\Films;
-use Illuminate\Support\Facades\Storage;
 
 class FilmController extends Controller
 {
     //index
-    public function index() {
+    public function index()
+    {
         $search = request('search');
         $perPage = request('per_page', 10);
         $type = request('type');
@@ -43,17 +44,16 @@ class FilmController extends Controller
     }
 
     //store
-    public function store(CreateFilmRequest $request){
+    public function store(CreateFilmRequest $request)
+    {
         $validated = $request->validated();
-        $file = $request->file('poster');
 
-        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-        $path = $file->storeAs('posters', $filename, 'public');
-
-        $validated['poster'] = $path;
-
+        $validated['poster'] = ImageSaverUtil::save('posters', $request->file('poster'));
         $film = Films::create($validated);
+        $validated['category'] = explode(',', $validated['category']);
+        foreach ($validated['category'] as $category) {
+            $film->category()->attach($category);
+        }
 
         return response()->json($film);
     }
@@ -65,20 +65,13 @@ class FilmController extends Controller
     }
 
     //update
-    public function update(Films  $film, CreateFilmRequest $request) {
+    public function update(Films $film, CreateFilmRequest $request)
+    {
         $validated = $request->validated();
 
-        if ($film->poster && Storage::disk('public')->exists($film->poster)) {
-            Storage::disk('public')->delete($film->poster);
-        }
-
-        $file = $request->file('poster');
-
-        $filename = uniqid() . '.' . $file->getClientOriginalExtension();
-
-        $path = $file->storeAs('posters', $filename, 'public');
-
-        $validated['poster'] = $path;
+        // Если есть файл постера, удаляем старый и сохраняем новый
+        if ($request->hasFile('poster'))
+            $validated['poster'] = ImageSaverUtil::update($film->poster, 'posters', $request->file('poster'));
 
         $film->update($validated);
 
@@ -86,9 +79,10 @@ class FilmController extends Controller
     }
 
     //destroy
-    public function destroy(Films $film) {
-        if ($film->poster && Storage::disk('public/posters')->exists($film->poster))
-            Storage::disk('public/posters')->delete($film->poster);
+    public function destroy(Films $film)
+    {
+        if ($film->poster)
+            ImageSaverUtil::delete($film->poster);
 
         $film->delete();
 

@@ -2,32 +2,30 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Http\Exceptions\HttpResponseException;
 use Illuminate\Support\Facades\Auth;
 
-class StoreUserRequest extends FormRequest
+class SerialFileRequest extends FormRequest
 {
     public function authorize(): bool
     {
-        return !Auth::check();
+        return Auth::check();
     }
 
     public function rules(): array
     {
         return [
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'date_of_birth' => ['nullable', 'date'],
-            'password' => ['required', 'string', 'min:6'],
-            'password_confirmation' => ['required', 'same:password'],
+            'film_id' => ['required', 'exists:films,id'],
+            'file' => ['required', 'file', 'mimes:mp4,avi,mpeg,mov,mkv', 'max:10240000'],
+            'season_number' => ['required', 'integer'],
+            'episode_number' => ['required', 'integer'],
         ];
     }
 
     public function failedValidation(Validator $validator)
     {
-        
         throw new HttpResponseException(response()->json([
             'status' => 'error',
             'errors' => $validator->errors(),

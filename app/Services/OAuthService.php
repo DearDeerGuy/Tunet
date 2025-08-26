@@ -72,13 +72,13 @@ class OAuthService
         $user = User::findOrFail($id);
 
         if (! URL::hasValidSignature($request))
-            return response()->json(['message' => 'Недопустимая или просроченная ссылка'], 403);
+            return response()->json(['message' => 'Неприпустиме або прострочене посилання'], 403);
 
         if ($user->hasVerifiedEmail())
             return redirect(config('app.frontend_url') . '/email-verified?status=already-verified');
 
         if (! hash_equals(sha1($user->email), $hash))
-            return response()->json(['message' => 'Неверный хеш'], 403);
+            return response()->json(['message' => 'Невірний хеш'], 403);
 
         $user->markEmailAsVerified();
         event(new Verified($user));
