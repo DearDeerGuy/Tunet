@@ -12,12 +12,13 @@ use App\Http\Controllers\Api\FavoriteController;
 use Illuminate\Support\Facades\Route;
 
 
-Route::post('/register', [AuthController::class, 'register']);                              // + 
-Route::post('/login', [AuthController::class, 'login']);                                    // +   
+Route::post('/register', [AuthController::class, 'register']);                              // +
+Route::post('/login', [AuthController::class, 'login']);                                    // +
 
 Route::apiResource('film', FilmController::class)->only('index', 'show');                   // +
 Route::apiResource('category', CategoriesController::class)->only('index', 'show');         // +
 Route::apiResource('reviews', ReviewsController::class)->only('index');                     // +
+Route::post('/user/{user}', [UserController::class, 'show']);                      // +
 
 Route::apiResource('tariff', TariffController::class)->only('index', 'show');               // +
 
