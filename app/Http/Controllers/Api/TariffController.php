@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreTariffRequest;
 use App\Http\Requests\UpdateTariffRequest;
 use App\Http\Util\ImageSaverUtil;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Tariff;
 use App\Models\User;
@@ -80,13 +81,10 @@ class TariffController extends Controller
     {
         $validatedData = $request->validate([
             'tariff_id' => ['nullable', 'integer', 'exists:tariffs,id'],
-            'user_id' => ['required', 'integer', 'exists:users,id'],
         ]);
-
-        $userId = $validatedData['user_id'];
+        $user = Auth::user()->id;
         $tariffId = $validatedData['tariff_id'] ?? null;
 
-        $user = User::find($userId);
         if (!$user) {
             return response()->json(['message' => 'Користувача не знайдено'], 404);
         }
