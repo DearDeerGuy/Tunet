@@ -79,23 +79,21 @@ class TariffController extends Controller
     }
     public function setTariffToUser(Request $request)
     {
+
         $validatedData = $request->validate([
             'tariff_id' => ['nullable', 'integer', 'exists:tariffs,id'],
         ]);
-        $user = Auth::user()->id;
+
+        $user = Auth::user();
         $tariffId = $validatedData['tariff_id'] ?? null;
 
-        if (!$user) {
-            return response()->json(['message' => 'Користувача не знайдено'], 404);
-        }
+
 
         if ($tariffId != null) {
             $tariff = Tariff::find($tariffId);
-            if (!$tariff) {
-                return response()->json(['message' => 'Тариф не знайдено'], 404);
-            }
+
             $user->tariff_end_date = now()->addMonths($tariff->duration_months);
-            ;
+
         } else {
             $user->tariff_end_date = null;
         }
