@@ -14,6 +14,8 @@ class Categories extends Model
         'slug',
         'name',
     ];
+    protected $hidden = ['pivot'];
+
     public function film(): BelongsToMany
     {
         return $this->belongsToMany(Films::class);

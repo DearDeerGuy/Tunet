@@ -47,7 +47,9 @@ class Films extends Model
             $array['url'] = $firstFile->link;
         }
         $array['poster'] = env('APP_URL') . "/storage/{$this->poster}";
-        $array['categories'] = $this->category()->pluck('slug')->toArray();
+        $array['categories'] = $this->category()
+            ->get(['categories.id', 'categories.slug', 'categories.name'])
+            ->toArray();
 
         return $array;
     }
