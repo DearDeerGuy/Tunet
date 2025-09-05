@@ -10,7 +10,7 @@ class AdminMiddleware
     public function handle($request, Closure $next, ...$lvl)
     {
         $user = Auth::user();
-        if ($user->tariff_end_date >= now()) {
+        if ($user->tariff_end_date <= now()) {
             $user->tariff_end_date = null;
             $user->tariff_id = null;
             $user->save();
