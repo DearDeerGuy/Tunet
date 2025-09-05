@@ -26,7 +26,11 @@ class FileController extends Controller
             $file = $film->files->first();
 
             if ($file)
-                $result = ['link' => $file->link];
+                $result =
+                    [
+                        'id' => $file->id,
+                        'link' => $file->link
+                    ];
             else
                 $result = [];
         } else
@@ -39,6 +43,7 @@ class FileController extends Controller
                 ->values()
                 ->map(function ($file) {
                     return [
+                        'id' => $file->id,
                         'season_number' => $file->season_number,
                         'episode_number' => $file->episode_number,
                         'link' => $file->link,
