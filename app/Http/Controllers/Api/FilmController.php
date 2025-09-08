@@ -4,38 +4,48 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\CreateFilmRequest;
+use App\Http\Requests\GetFilmsRequest;
 use App\Http\Util\ImageSaverUtil;
 use App\Models\Films;
+use ReviewsController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class FilmController extends Controller
 {
     //index
-    public function index()
+    public function index(GetFilmsRequest $request)
     {
-        $search = request('search');
-        $perPage = request('per_page', 10);
-        $type = request('type');
-        $categoriesParam = request('categories');
+        $validated = $request->validated();
+
+        $search = $validated['search'] ?? null;
+        $perPage = $validated['per_page'] ?? 10;
+        $type = $validated['type'] ?? null;
+        $categoriesParam = $validated['categories'] ?? null;
+        $of = $validated['of'] ?? null;
+        $ot = $validated['ot'] ?? null;
 
         $query = Films::query();
 
-        if ($type)
+        if ($type) {
             $query->where('type', $type);
+        }
 
-        if ($search)
+        if ($search) {
             $query->where('title', 'like', "%$search%");
+        }
 
         if ($categoriesParam) {
-            $categories = explode(',', $categoriesParam);
-            $categories = array_filter($categories);
-
-            if (!empty($categories)) {
-                foreach ($categories as $categorySlug) {
-                    $query->whereHas('category', function ($q) use ($categorySlug) {
-                        $q->where('slug', $categorySlug);
-                    });
-                }
+            $categories = array_filter(explode(',', $categoriesParam));
+            foreach ($categories as $categorySlug) {
+                $query->whereHas('category', fn($q) => $q->where('slug', $categorySlug));
             }
+        }
+
+        $query->withAvg('reviews as rating', 'mark');
+
+        if ($of && $ot) {
+            $query->orderBy($of, $ot);
         }
 
         return response()->json(
@@ -61,6 +71,7 @@ class FilmController extends Controller
     //get one
     public function show(Films $film)
     {
+        $film->withAvg('reviews as rating', 'mark');
         return response()->json($film);
     }
 

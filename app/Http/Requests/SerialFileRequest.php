@@ -2,18 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CustomRequest;
 
-class SerialFileRequest extends FormRequest
+class SerialFileRequest extends CustomRequest
 {
-    public function authorize(): bool
-    {
-        return Auth::check();
-    }
-
     public function rules(): array
     {
         return [
@@ -22,13 +14,5 @@ class SerialFileRequest extends FormRequest
             'season_number' => ['required', 'integer'],
             'episode_number' => ['required', 'integer'],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'status' => 'error',
-            'errors' => $validator->errors(),
-        ], 422));
     }
 }

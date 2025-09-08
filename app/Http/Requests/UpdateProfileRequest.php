@@ -2,19 +2,12 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
+
+use App\Http\Requests\CustomRequest;
 use Illuminate\Validation\Rule;
 
-class UpdateProfileRequest extends FormRequest
+class UpdateProfileRequest extends CustomRequest
 {
-    public function authorize(): bool
-    {
-        return Auth::check();
-    }
-
     public function rules(): array
     {
         return [
@@ -23,13 +16,5 @@ class UpdateProfileRequest extends FormRequest
             'date_of_birth' => ['nullable', 'date'],
             'avatar' => ['nullable', 'image', 'mimes:jpeg,png,jpg', 'max:2048'],
         ];
-    }
-
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'status' => 'error',
-            'errors' => $validator->errors(),
-        ], 422));
     }
 }

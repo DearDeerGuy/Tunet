@@ -2,18 +2,10 @@
 
 namespace App\Http\Requests;
 
-use Illuminate\Contracts\Validation\Validator;
-use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Http\Exceptions\HttpResponseException;
-use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\CustomRequest;
 
-class CreateFilmRequest extends FormRequest
+class CreateFilmRequest extends CustomRequest
 {
-    public function authorize(): bool
-    {
-        return Auth::check();
-    }
-
     public function rules(): array
     {
         $rules = [
@@ -33,11 +25,5 @@ class CreateFilmRequest extends FormRequest
 
         return $rules;
     }
-    public function failedValidation(Validator $validator)
-    {
-        throw new HttpResponseException(response()->json([
-            'status' => 'error',
-            'errors' => $validator->errors(),
-        ], 422));
-    }
+
 }

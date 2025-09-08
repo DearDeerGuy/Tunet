@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use function PHPUnit\Framework\isNull;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
 /**
  * @mixin Builder
@@ -35,7 +35,11 @@ class Films extends Model
     }
     public function reviews(): HasMany
     {
-        return $this->hasMany(Reviews::class);
+        return $this->hasMany(Reviews::class,'film_id');
+    }
+    protected function rating(): Attribute
+    {
+        return Attribute::get(fn($value) => $value !== null ? round($value, 1) : null);
     }
     public function toArray()
     {
