@@ -7,9 +7,7 @@ use App\Http\Requests\CreateFilmRequest;
 use App\Http\Requests\GetFilmsRequest;
 use App\Http\Util\ImageSaverUtil;
 use App\Models\Films;
-use ReviewsController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
+
 
 class FilmController extends Controller
 {
@@ -71,7 +69,8 @@ class FilmController extends Controller
     //get one
     public function show(Films $film)
     {
-        $film->withAvg('reviews as rating', 'mark');
+        //$film = Films::withAvg('reviews as rating', 'mark')->findOrFail($film->id);
+        $film->loadAvg('reviews as rating', 'mark');
         return response()->json($film);
     }
 

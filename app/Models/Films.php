@@ -39,7 +39,9 @@ class Films extends Model
     }
     protected function rating(): Attribute
     {
-        return Attribute::get(fn($value) => $value !== null ? round($value, 1) : null);
+        return Attribute::get(
+            fn($value) => $value !== null ? round($value, 1) : 0
+        );
     }
     public function toArray()
     {

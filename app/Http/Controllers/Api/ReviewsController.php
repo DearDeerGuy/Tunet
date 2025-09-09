@@ -16,7 +16,7 @@ class ReviewsController extends Controller
     {
         $data = $request->validated();
 
-        $film = Films::find($data['film_id']);
+        $film = Films::find($data['film_id'])->reviews();
         return response()->json(
             $film->paginate($data['perPage'])
         );
@@ -25,25 +25,24 @@ class ReviewsController extends Controller
     public function store(CreateReviewsRequest $request)
     {
         $validated = $request->validated();
-        $validated['user_id']=Auth::id();
 
-        $reviews = Reviews::create($validated);
-        return response()->json($reviews, 201);
-}
-    public function show(Reviews $reviews)
-    {
-        return response()->json($reviews);
+        $review = Reviews::create($validated);
+        return response()->json($review, 201);
     }
-    public function update(CreateReviewsRequest $request, Reviews $reviews): JsonResponse
+    public function show(Reviews $review)
+    {
+        return response()->json($review);
+    }
+    public function update(CreateReviewsRequest $request, Reviews $review): JsonResponse
     {
         $validated = $request->validated();
+        $review->update($validated);
 
-        $reviews->update($validated);
-        return response()->json($reviews);
+        return response()->json($review);
     }
-    public function destroy(Reviews $reviews): JsonResponse
+    public function destroy(Reviews $review): JsonResponse
     {
-        $reviews->delete();
+        $review->delete();
         return response()->json(null, 204);
     }
 

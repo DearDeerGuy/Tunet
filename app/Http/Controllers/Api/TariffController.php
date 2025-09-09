@@ -9,7 +9,6 @@ use App\Http\Util\ImageSaverUtil;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Http\Request;
 use App\Models\Tariff;
-use App\Models\User;
 
 
 class TariffController extends Controller
