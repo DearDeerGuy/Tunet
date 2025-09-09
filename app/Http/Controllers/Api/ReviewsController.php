@@ -16,7 +16,7 @@ class ReviewsController extends Controller
     {
         $data = $request->validated();
 
-        $film = Films::find($data['film_id']);
+        $film = Films::find($data['film_id'])->reviews();
         return response()->json(
             $film->paginate($data['perPage'])
         );
