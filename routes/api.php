@@ -34,17 +34,14 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile', [UserController::class, 'updateProfile']);
     Route::apiResource('favorite', FavoriteController::class)->except('update');
     Route::get('/stream/{filename}', [FileController::class, 'stream']);
-    Route::get('/stream', [FileController::class, 'stream']);
     Route::apiResource('reviews', ReviewsController::class)->except('index');
     Route::middleware('admin:1')->group(function () {
         Route::apiResource('film', FilmController::class)->except('index', 'show', 'update');
         Route::post('/film/{film}', [FilmController::class, 'update']);
         Route::post('/file', [FileController::class, 'store']);
-        Route::post('/file/serial', [FileController::class, 'storeSerial']);
         Route::get('/file', [FileController::class, 'index']);
-        Route::post('/file/update/{file}', [FileController::class, 'update']);
-        Route::post('/file/update/serial/{file}', [FileController::class, 'updateSerial']);
-        Route::delete('/file/delete/{file}', [FileController::class, 'destroy']);
+        Route::post('/file/{file}', [FileController::class, 'update'])->name('file.update');
+        Route::delete('/file/{file}', [FileController::class, 'destroy']);
     });
 
     Route::middleware('admin:2')->group(function () {

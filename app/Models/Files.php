@@ -19,4 +19,8 @@ class Files extends Model
     {
         return $this->belongsTo(Films::class);
     }
+    public function file(): \Illuminate\Database\Eloquent\Relations\hasOne
+    {
+        return $this->hasOne(Files::class, 'films_id');
+    }
 }
