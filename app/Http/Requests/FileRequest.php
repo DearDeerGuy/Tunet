@@ -22,7 +22,7 @@ class FileRequest extends CustomRequest
         $film = Films::find($filmId);
 
 
-        if ($film->type === "serial") {
+        if ($film?->type === "serial") {
             if ($isUpdate) {
                 $currentFileId = $this->route('file')->id;
                 $season = $this->input('season_number', $this->route('file')->season_number);
