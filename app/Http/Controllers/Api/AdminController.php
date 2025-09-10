@@ -7,7 +7,6 @@ use App\Http\Requests\BannedRequest;
 use App\Http\Requests\MakeAdminRequest;
 use App\Services\AdminService;
 use Illuminate\Http\JsonResponse as JsonResponse;
-use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {

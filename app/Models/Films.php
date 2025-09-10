@@ -25,6 +25,7 @@ class Films extends Model
         'actors',
     ];
     protected $hidden = ['files'];
+    protected $appends = ['url'];
 
 
     public function files(): HasMany
@@ -47,32 +48,45 @@ class Films extends Model
     }
     public function getUrlAttribute()
     {
+        $result = [];
         if ($this->type === 'film') {
-            return $this->files->first()->link ?? null;
-        }
+            $file = $this->files()->first();
 
-        $video = [];
-        foreach ($this->files as $f) {
-            $video[$f->season_number][$f->episode_number] = $this->getUrlByName($f->link);
-        }
-
-        ksort($video); 
-        foreach ($video as &$episodes) {
-            ksort($episodes); 
-        }
-
-        return $video;
+            if ($file)
+                $result =
+                    [
+                        'id' => $file->id,
+                        'link' => $file->link
+                    ];
+            else
+                $result = [];
+        } else
+            // Для сериала возвращаем 'season_number' и 'episode_number'
+            $result = $this->files
+                ->sortBy([
+                    ['season_number', 'asc'],
+                    ['episode_number', 'asc'],
+                ])
+                ->values()
+                ->map(function ($file) {
+                    return [
+                        'id' => $file->id,
+                        'season_number' => $file->season_number,
+                        'episode_number' => $file->episode_number,
+                        'link' => $file->link,
+                    ];
+                });
+        return $result;
     }
-    private function getUrlByName($name)
+    /*private function getUrlByName($name)
     {
         if (!$name)
             return null;
         return env('APP_URL', 'SET_ENV_PLS') . '/api/stream/' . $name;
-    }
+    } */
     public function toArray()
     {
         $array = parent::toArray();
-        
         $array['poster'] = env('APP_URL') . "/storage/{$this->poster}";
         $array['categories'] = $this->category()
             ->get(['categories.id', 'categories.slug', 'categories.name'])

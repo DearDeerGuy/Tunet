@@ -11,12 +11,7 @@ use App\Models\Films;
 
 class FilmController extends Controller
 {
-    private function getUrlByName($name)
-    {
-        if (!$name)
-            return null;
-        return env('APP_URL', 'SET_ENV_PLS') . '/api/stream/' . $name;
-    }
+   
     //index
     public function index(GetFilmsRequest $request)
     {
@@ -46,52 +41,20 @@ class FilmController extends Controller
             }
         }
 
-        $query->with('files')->withAvg('reviews as rating', 'mark');
+        $query->withAvg('reviews as rating', 'mark');
 
         if ($of && $ot) {
             $query->orderBy($of, $ot);
         }
         $films = $query->paginate($perPage);
 
-        $films->getCollection()->transform(function ($film) {
-            if ($film->type === 'film') {
-                $film->url = $film->files->first()->link ?? null;
-
-            } else {
-                $video = [];
-                foreach ($film->files as $f) {
-                    $video[$f->season_number][$f->episode_number] = $this->getUrlByName($f->link);
-                }
-                ksort($video);
-                foreach ($video as &$episodes) {
-                    ksort($episodes);
-                }
-                $film->url = $video;
-            }
-            return $film;
-        });
         return response()->json($films);
 
     }
     public function show(Films $film)
     {
-        $film->load('files')->loadAvg('reviews as rating', 'mark');
+        $film->loadAvg('reviews as rating', 'mark');
 
-        if ($film->type === 'film') {
-            $film->url = $film->files->first()->link ?? null;
-        } else {
-            $video = [];
-            foreach ($film->files as $f) {
-                $video[$f->season_number][$f->episode_number] = $this->getUrlByName($f->link);
-            }
-
-            ksort($video);
-            foreach ($video as &$episodes) {
-                ksort($episodes);
-            }
-
-            $film->url = $video;
-        }
         return response()->json($film);
     }
     //store

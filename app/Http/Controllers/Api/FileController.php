@@ -51,15 +51,6 @@ class FileController extends Controller
 
         return response()->json($result);
     }
-    public function getSerialInfo(Films $film)
-    {
-        if ($film->type != "serial")
-            return response()->json(['message' => 'Не серіал']);
-
-        $seasons = $film->files->groupBy('season_number');
-
-        return response()->json($seasons);
-    }
     public function store(FileRequest $request)
     {
         $validated = $request->validated();

@@ -16,22 +16,24 @@ class ReviewsController extends Controller
     {
         $data = $request->validated();
 
-        $film = Films::find($data['film_id'])->reviews();
+        $reviews = Reviews::where('film_id', $data['film_id']);
+        if (isset($data["user_id"]) && $data['user_id']) {
+            $reviews->where('user_id', $data['user_id']);
+        }
         return response()->json(
-            $film->paginate($data['perPage'])
+            $reviews->paginate($data['perPage'])
         );
     }
-
+    public function show(Reviews $review)
+    {
+        return response()->json($review);
+    }
     public function store(CreateReviewsRequest $request)
     {
         $validated = $request->validated();
 
         $review = Reviews::create($validated);
         return response()->json($review, 201);
-    }
-    public function show(Reviews $review)
-    {
-        return response()->json($review);
     }
     public function update(CreateReviewsRequest $request, Reviews $review): JsonResponse
     {
