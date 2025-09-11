@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Favorite;
+use Reviews;
+use Tariff;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -49,8 +52,10 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->hasOne(Tariff::class);
     }
-
-
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Reviews::class);
+    }
     public function toArray()
     {
         $array = parent::toArray();

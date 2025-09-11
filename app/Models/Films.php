@@ -46,6 +46,10 @@ class Films extends Model
             fn($value) => $value !== null ? round($value, 1) : 0
         );
     }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class, 'film_id');
+    }
     public function getUrlAttribute()
     {
         $result = [];

@@ -15,11 +15,15 @@ class ReviewsController extends Controller
     public function index(ReviewsRequest $request)
     {
         $data = $request->validated();
+        $perPage = $data['perPage'] ?? 10;
 
-        $reviews = Reviews::where('film_id', $data['film_id']);
-        if (isset($data["user_id"]) && $data['user_id']) {
+        $reviews = Reviews::with(['user:id,name,avatar'])
+            ->where('film_id', $data['film_id']);
+
+        if (!empty($data['user_id'])) {
             $reviews->where('user_id', $data['user_id']);
         }
+
         return response()->json(
             $reviews->paginate($data['perPage'])
         );

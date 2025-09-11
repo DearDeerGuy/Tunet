@@ -6,19 +6,54 @@ use App\Http\Controllers\Controller;
 use App\Models\Favorite;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use App\Http\Requests\GetFilmsRequest;
+use App\Models\Films;
 
 class FavoriteController extends Controller
 {
     // Получить все избранные фильмы текущего пользователя
-    public function index(Request $request)
+    public function index(GetFilmsRequest $request)
     {
-        $perPage = $request->query('per_page', 10);
-        $user = Auth::user();
-        $favorites = $user->favorites()
-            ->with('film')
-            ->paginate($perPage);
+        $validated = $request->validated();
 
-        return response()->json($favorites);
+        $search = $validated['search'] ?? null;
+        $perPage = $validated['per_page'] ?? 10;
+        $type = $validated['type'] ?? null;
+        $categoriesParam = $validated['categories'] ?? null;
+        $of = $validated['of'] ?? null;
+        $ot = $validated['ot'] ?? null;
+
+        $user = Auth::user();
+        
+        $query = Films::query()
+            ->whereHas('favorites', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
+
+        if ($type) {
+            $query->where('type', $type);
+        }
+
+        if ($search) {
+            $query->where('title', 'like', "%$search%");
+        }
+
+        if ($categoriesParam) {
+            $categories = array_filter(explode(',', $categoriesParam));
+            foreach ($categories as $categorySlug) {
+                $query->whereHas('category', fn($q) => $q->where('slug', $categorySlug));
+            }
+        }
+
+        $query->withAvg('reviews as rating', 'mark');
+
+        if ($of && $ot) {
+            $query->orderBy($of, $ot);
+        }
+        $films = $query->paginate($perPage);
+
+        return response()->json($films);
+
     }
     public function show(Favorite $favorite)
     {
@@ -33,7 +68,7 @@ class FavoriteController extends Controller
         $film_id = $request->input('film_id');
         $user = Auth::user();
 
-        // Проверка на дублирование
+        // Проверка на дублирование                                                   Аркадий - Танк
         $alreadyExists = Favorite::where('user_id', $user->id)
             ->where('film_id', $film_id)
             ->exists();

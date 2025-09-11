@@ -21,6 +21,6 @@ class Favorite extends Model
     // Связь с фильмом/сериалом
     public function film(): BelongsTo
     {
-        return $this->belongsTo(Films::class);
+        return $this->belongsTo(Film::class, 'film_id');
     }
 }
