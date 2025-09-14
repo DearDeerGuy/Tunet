@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 Route::post('/register', [AuthController::class, 'register']);
 Route::post('/login', [AuthController::class, 'login']);
 
-Route::apiResource('film', FilmController::class)->only('index', 'show');
+Route::apiResource('film', FilmController::class)->only('index', 'show')->middleware('optional.auth');
 Route::apiResource('category', CategoriesController::class)->only('index', 'show');
 Route::apiResource('reviews', ReviewsController::class)->only('index');
 Route::post('/user/{user}', [UserController::class, 'show']);
@@ -28,6 +28,7 @@ Route::prefix('auth/google')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
+
     Route::post('/email/verification-notification', [AuthController::class, 'verificationResend'])->name('verification.send');
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::post('/change-password', [UserController::class, 'changePassword']);

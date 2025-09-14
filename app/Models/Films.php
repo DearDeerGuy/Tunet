@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use App\Models\Favorite;
+use Illuminate\Support\Facades\Auth;
 
 /**
  * @mixin Builder
@@ -25,7 +27,7 @@ class Films extends Model
         'actors',
     ];
     protected $hidden = ['files'];
-    protected $appends = ['url'];
+    protected $appends = ['url', 'isFavorite'];
 
 
     public function files(): HasMany
@@ -49,6 +51,12 @@ class Films extends Model
     public function favorites()
     {
         return $this->hasMany(Favorite::class, 'film_id');
+    }
+    public function getIsFavoriteAttribute()
+    {
+        if (!Auth::user())
+            return false;
+        return $this->favorites()->where('user_id', Auth::user()->id)->get()->count() != 0;
     }
     public function getUrlAttribute()
     {
