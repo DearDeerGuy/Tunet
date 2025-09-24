@@ -26,7 +26,10 @@ class UserService
             function ($user, $password) {
                 $user->password = Hash::make($password);
                 $user->tokens()->delete();
+                $user->email_verified_at = null;
+
                 $user->save();
+                $user->sendEmailVerificationNotification();
             }
         );
 
