@@ -26,10 +26,8 @@ class UserService
             function ($user, $password) {
                 $user->password = Hash::make($password);
                 $user->tokens()->delete();
-                $user->email_verified_at = null;
 
                 $user->save();
-                $user->sendEmailVerificationNotification();
             }
         );
 
@@ -64,8 +62,15 @@ class UserService
         if ($request->hasFile('avatar')) {
             $user->avatar = ImageSaverUtil::update($user->avatar, 'avatars', $request->file('avatar'));
         }
-
         $user->save();
+
+        if ($request['email']) {
+            $user->email_verified_at = null;
+            $user->sendEmailVerificationNotification();
+            $user->save();
+
+        }
+
 
         return response()->json([
             'message' => 'Дані успішно оновлено.',
