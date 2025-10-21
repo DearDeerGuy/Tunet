@@ -64,10 +64,9 @@ class FilmController extends Controller
 
         $validated['poster'] = ImageSaverUtil::save('posters', $request->file('poster'));
         $film = Films::create($validated);
+
         $validated['category'] = explode(',', $validated['category']);
-        foreach ($validated['category'] as $category) {
-            $film->category()->attach($category);
-        }
+        $film->category()->sync($validated['category']);
 
         return response()->json($film);
     }
@@ -82,6 +81,9 @@ class FilmController extends Controller
             $validated['poster'] = ImageSaverUtil::update($film->poster, 'posters', $request->file('poster'));
 
         $film->update($validated);
+
+        $validated['category'] = explode(',', $validated['category']);
+        $film->category()->sync($validated['category']);
 
         return response()->json($film);
     }
